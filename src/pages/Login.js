@@ -3,12 +3,16 @@ import '../App.css';
 import axios from '../axiosinstance';
 import { useForm } from "react-hook-form";
 import { Redirect } from 'react-router'
+import {NotificationContainer,NotificationManager} from 'react-notifications';
 
 export default function Login() {
     const {register, handleSubmit, errors,getValues,setValue } = useForm();
     const [bottonLoading,setBottonLoading] = useState(false);
     const [redirect,setRedirect] = useState(0);
 
+    /**
+     * Método responsavel por receber os dados do formulário e realizar a autenticação.
+     */
     const login = data =>{
         setBottonLoading(true);
         axios.post("/login",data)
@@ -23,6 +27,9 @@ export default function Login() {
         });
     }
 
+    /**
+     * Metodo de inicialização, caso não tenha um atendimento aberto, o mesmo irá abrir.
+     */
     const init = () => {
         var config = {
             headers:{
@@ -31,18 +38,17 @@ export default function Login() {
         }
         axios.get('/conversation/init',config)
         .then(data => {
+            console.log(data.data);
             if(data.data.status == 1){
                 setRedirect(1);
             }else{
-                setRedirect(2);
+                NotificationManager.warning(data.data.message, 'Atenção' );
             }
         });
     }
 
     switch (redirect) {
         case 1:
-            return <Redirect to='/home'/>;
-        case 2:
             return <Redirect to='/home'/>;
         default:
             return(
@@ -78,7 +84,8 @@ export default function Login() {
                                 </div>
                             </div>
                         </div>
-                    </div>            
+                    </div> 
+                    <NotificationContainer/>           
                 </div>
             );
     }

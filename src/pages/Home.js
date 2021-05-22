@@ -45,7 +45,7 @@ export default function Home() {
 
         var channel = window.Echo.channel('message-1');
        
-        channel.listen('event-1', (data) => {
+        channel.listen('.event-1', (data) => {
             load();
         });
 
